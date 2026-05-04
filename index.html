@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>For Nipuni 🌹</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Great+Vibes&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body {
+  background:#070308;
+  color:#c49090;
+  font-family:'Cormorant Garamond',serif;
+  overflow-x:hidden;
+}
+
+/* ─── VIGNETTE ─── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 40%, transparent 30%, #040106 100%);
+}
+
+/* ─── GRAIN OVERLAY ─── */
+body::after{
+  content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+}
+
+/* ─── HEARTS CANVAS ─── */
+#hearts-canvas{position:fixed;inset:0;z-index:2;pointer-events:none;width:100%;height:100%;}
+
+/* ════════════════════════════════
+   LOADER
+════════════════════════════════ */
+#loader{
+  position:fixed;inset:0;z-index:1000;
+  background:#070308;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:28px;
+  transition:opacity 1s ease, visibility 1s ease;
+}
+#loader.out{opacity:0;visibility:hidden;}
+
+#ecg-canvas{display:block;}
+
+.loader-tagline{
+  font-size:11px;letter-spacing:6px;text-transform:uppercase;
+  color:#5a2828;opacity:0;animation:fadeIn .8s ease .6s forwards;
+}
+
+.prog-wrap{width:180px;height:1px;background:#1a0a0a;position:relative;}
+.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,#5a2020,#c07070);}
+
+.loader-heart{
+  opacity:0;
+  animation:loaderHeart 1.2s ease 2.4s forwards;
+  font-family:'Great Vibes',cursive;font-size:44px;color:#a05050;
+}
+@keyframes loaderHeart{
+  0%{opacity:0;transform:scale(.6);}
+  60%{opacity:1;transform:scale(1.15);}
+  100%{opacity:1;transform:scale(1);}
+}
+
+/* ════════════════════════════════
+   SECTIONS
+════════════════════════════════ */
+.section{
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;z-index:3;
+  padding:80px 28px;
+}
+
+/* ─── SECTION LABELS ─── */
+.sec-label{
+  font-size:10px;letter-spacing:7px;text-transform:uppercase;
+  color:#3d1818;margin-bottom:44px;text-align:center;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+.sec-label.on{opacity:1;transform:translateY(0);}
+
+/* ════════════════════════════════
+   HERO
+════════════════════════════════ */
+#hero{flex-direction:column;text-align:center;}
+
+.hero-pre{
+  font-family:'Great Vibes',cursive;font-size:32px;color:#7a4545;
+  opacity:0;transform:translateY(12px);
+  transition:all .9s ease;
+}
+.hero-pre.on{opacity:1;transform:translateY(0);}
+
+.hero-name{
+  font-family:'Great Vibes',cursive;
+  font-size:clamp(72px,15vw,120px);
+  color:#e8998a;line-height:1.05;
+  opacity:0;transform:translateY(24px);
+  transition:all 1.1s cubic-bezier(.16,1,.3,1) .25s;
+  text-shadow:0 0 120px rgba(200,100,90,.18);
+}
+.hero-name.on{opacity:1;transform:translateY(0);}
+
+.hero-divider{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin:18px auto;
+  opacity:0;transition:opacity .8s ease .6s;
+}
+.hero-divider.on{opacity:1;}
+.hdl{width:70px;height:.5px;background:#4a2020;}
+
+.hero-sub{
+  font-size:11px;letter-spacing:7px;text-transform:uppercase;color:#5a2828;
+  opacity:0;transition:opacity .8s ease .9s;
+}
+.hero-sub.on{opacity:1;}
+
+.scroll-cue{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  color:#3a1a1a;font-size:10px;letter-spacing:4px;text-transform:uppercase;
+  opacity:0;animation:fadeIn 1s ease 3s forwards;
+}
+.scroll-cue-line{
+  width:.5px;height:44px;background:#3a1a1a;transform-origin:top;
+  animation:pulse-line 2s ease 3s infinite;
+}
+@keyframes pulse-line{
+  0%,100%{transform:scaleY(.3);opacity:.3;}
+  50%{transform:scaleY(1);opacity:1;}
+}
+
+/* ════════════════════════════════
+   TYPEWRITER SECTION
+════════════════════════════════ */
+#tw-section{flex-direction:column;text-align:center;}
+
+#tw-output{
+  font-size:clamp(19px,3vw,24px);
+  font-style:italic;font-weight:300;
+  color:#b07070;line-height:2;
+  max-width:520px;min-height:220px;
+}
+.cursor{
+  display:inline-block;width:1.5px;height:.9em;
+  background:#c07070;margin-left:3px;vertical-align:middle;
+  animation:blink .75s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ════════════════════════════════
+   LETTER SECTION
+════════════════════════════════ */
+#letter-section{flex-direction:column;}
+
+.letter-border{
+  max-width:500px;width:100%;
+  border-left:.5px solid #3d1a1a;
+  padding-left:36px;
+}
+
+/* ════════════════════════════════
+   PROMISE SECTION
+════════════════════════════════ */
+#promise-section{flex-direction:column;text-align:center;}
+
+.promise-line{
+  overflow:hidden;margin-bottom:4px;
+}
+.promise-line .inn{
+  display:block;
+  transform:translateY(105%);
+  transition:transform .75s cubic-bezier(.16,1,.3,1);
+}
+.promise-line.on .inn{transform:translateY(0);}
+
+/* ════════════════════════════════
+   FORGIVE SECTION
+════════════════════════════════ */
+#forgive-section{flex-direction:column;text-align:center;}
+
+.forgive-btn{
+  background:transparent;
+  border:.5px solid #6a2828;
+  color:#b07070;
+  font-family:'Cormorant Garamond',serif;
+  font-size:13px;letter-spacing:5px;text-transform:uppercase;
+  padding:16px 44px;cursor:pointer;
+  transition:all .4s ease;
+  margin-top:44px;
+}
+.forgive-btn:hover{
+  background:rgba(160,60,60,.12);
+  border-color:#b07070;color:#e0a090;
+  transform:scale(1.04);
+}
+.forgive-btn:active{transform:scale(.97);}
+
+.forgiven-wrap{
+  display:none;flex-direction:column;align-items:center;gap:12px;
+  margin-top:28px;
+}
+.forgiven-wrap.show{display:flex;}
+.forgiven-word{
+  font-family:'Great Vibes',cursive;
+  font-size:clamp(52px,10vw,80px);
+  color:#e8998a;
+  animation:heartBeat 1.3s ease infinite;
+}
+.forgiven-tiny{
+  font-size:10px;letter-spacing:6px;text-transform:uppercase;
+  color:#6a3030;animation:fadeIn .8s ease .4s both;
+}
+@keyframes heartBeat{
+  0%,100%{transform:scale(1);}
+  14%{transform:scale(1.08);}
+  28%{transform:scale(1);}
+  42%{transform:scale(1.05);}
+}
+
+/* ════════════════════════════════
+   REUSABLE REVEAL CLASSES
+════════════════════════════════ */
+.rf{opacity:0;transform:translateY(18px);transition:opacity .85s ease,transform .85s ease;}
+.rf.on{opacity:1;transform:translateY(0);}
+
+.rl{overflow:hidden;}
+.rl .inn{display:block;transform:translateY(105%);transition:transform .75s cubic-bezier(.16,1,.3,1);}
+.rl.on .inn{transform:translateY(0);}
+
+/* delay helpers */
+.d1{transition-delay:.08s!important;}
+.d2{transition-delay:.22s!important;}
+.d3{transition-delay:.36s!important;}
+.d4{transition-delay:.50s!important;}
+.d5{transition-delay:.64s!important;}
+.d6{transition-delay:.78s!important;}
+.d7{transition-delay:.92s!important;}
+.d8{transition-delay:1.06s!important;}
+
+/* ─── TYPOGRAPHY HELPERS ─── */
+.script-xl{font-family:'Great Vibes',cursive;font-size:clamp(44px,7vw,64px);color:#c08070;line-height:1.2;}
+.script-md{font-family:'Great Vibes',cursive;font-size:clamp(28px,5vw,40px);color:#9a5f5f;}
+.body-soft{font-style:italic;font-weight:300;font-size:clamp(17px,2.5vw,21px);line-height:2.1;color:#a06868;}
+.em{color:#e09a88;font-style:italic;}
+.sp{display:block;height:20px;}
+.sp-lg{display:block;height:40px;}
+
+/* ─── DIVIDERS ─── */
+.rose-div{
+  display:flex;align-items:center;gap:14px;
+  margin:36px auto;width:fit-content;
+}
+.rdl{width:56px;height:.5px;background:#3d1a1a;}
+
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- ─── HEARTS CANVAS ─── -->
+<canvas id="hearts-canvas"></canvas>
+
+<!-- ════════════ LOADER ════════════ -->
+<div id="loader">
+  <canvas id="ecg-canvas" width="280" height="70"></canvas>
+  <p class="loader-tagline">preparing something just for you</p>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
+  <p class="loader-heart">🌹</p>
+</div>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="section" id="hero">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
+    <p class="hero-pre" id="hp">hey,</p>
+    <h1 class="hero-name" id="hn">Nipuni</h1>
+    <div class="hero-divider" id="hd">
+      <div class="hdl"></div>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#7a3535">
+        <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+      </svg>
+      <div class="hdl"></div>
+    </div>
+    <p class="hero-sub" id="hs">i have something i need to tell you</p>
+  </div>
+  <div class="scroll-cue">
+    <span>scroll</span>
+    <div class="scroll-cue-line"></div>
+  </div>
+</section>
+
+<!-- ════════════ TYPEWRITER ════════════ -->
+<section class="section" id="tw-section">
+  <div style="display:flex;flex-direction:column;align-items:center;max-width:560px;width:100%;">
+    <p class="sec-label rf" id="tw-label">the honest truth</p>
+    <div id="tw-output"></div>
+  </div>
+</section>
+
+<!-- ════════════ LETTER ════════════ -->
+<section class="section" id="letter-section">
+  <div style="max-width:520px;width:100%;">
+    <p class="sec-label rf" style="text-align:left;margin-bottom:36px;">a letter from me to you</p>
+    <div class="letter-border">
+      <span class="sp"></span>
+      <div class="rl d1"><span class="inn script-md">Pookie,</span></div>
+      <span class="sp"></span>
+
+      <p class="rf d2 body-soft">
+        I pick fights over the <em class="em">silliest, tiniest</em> things. 
+        A word you said. A look I misread. Something 
+        that didn't even matter — and I turn it into a whole thing.
+      </p>
+      <span class="sp"></span>
+
+      <p class="rf d3 body-soft">
+        I see it happening and I still can't stop it. And every single time, 
+        the moment it's over — I feel <em class="em">terrible.</em> 
+        Because I look at you and I think: 
+        why did I just do that to the person I love most?
+      </p>
+      <span class="sp"></span>
+
+      <p class="rf d4 body-soft">
+        The truth is — underneath every dumb argument, 
+        all I am is scared. Scared of losing you. 
+        Scared that somehow, someday, 
+        you'll get tired of my mess.
+        <em class="em">So I push, before I can be pushed.</em>
+        I know. It's stupid.
+      </p>
+      <span class="sp"></span>
+
+      <p class="rf d5 body-soft">
+        But you stay. Every time, you stay. 
+        And do you know how much that means to me? 
+        You are the most patient, most beautiful, 
+        most <em class="em">infuriatingly forgiving</em> person I know. 
+        And I don't deserve you — 
+        but god, I want to.
+      </p>
+      <span class="sp-lg"></span>
+
+      <div class="rl d6"><span class="inn script-md" style="display:block;text-align:right;">— your silly boy who loves you endlessly 🌹</span></div>
+      <span class="sp"></span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ PROMISE ════════════ -->
+<section class="section" id="promise-section">
+  <div style="text-align:center;max-width:540px;width:100%;">
+    <p class="sec-label rf">what i'm promising you</p>
+
+    <div class="promise-line d1"><span class="inn script-xl">I will breathe first.</span></div>
+    <span class="sp"></span>
+    <div class="promise-line d2"><span class="inn script-xl">I will choose <em class="em">you</em> over being right.</span></div>
+    <span class="sp"></span>
+    <div class="promise-line d3"><span class="inn script-xl">I will never waste</span></div>
+    <div class="promise-line d4"><span class="inn script-xl">our happy on something silly.</span></div>
+
+    <span class="sp-lg"></span>
+
+    <p class="rf d5 body-soft">
+      You're not just my girlfriend.<br/>
+      You are my <em class="em">calm, my home, my favorite human.</em><br/>
+      You deserve to feel that — every single day.<br/>
+      Not just on the days I get it right.
+    </p>
+
+    <div class="rose-div rf d6">
+      <div class="rdl"></div>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="#5a2828">
+        <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+      </svg>
+      <div class="rdl"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FORGIVE ════════════ -->
+<section class="section" id="forgive-section">
+  <div style="display:flex;flex-direction:column;align-items:center;">
+    <div class="rl d1"><span class="inn" style="font-family:'Great Vibes',cursive;font-size:clamp(52px,10vw,80px);color:#e8998a;display:block;text-align:center;">I'm so sorry, Nipuni</span></div>
+    <span class="sp"></span>
+    <p class="rf d2 body-soft" style="text-align:center;max-width:420px;">
+      I know sorry isn't magic.<br/>
+      But I mean it with everything I have.<br/>
+      I love you — <em class="em">more than all our silly fights, combined.</em>
+    </p>
+    <button class="forgive-btn rf d3" id="forgive-btn">
+      will you forgive me, pookie? 🌹
+    </button>
+    <div class="forgiven-wrap" id="forgiven-wrap">
+      <p class="forgiven-word">She said yes! 🌸</p>
+      <p class="forgiven-tiny">that's the only answer i needed</p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ═══ ECG LOADER ═══ */
+(function(){
+  const c = document.getElementById('ecg-canvas');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  const pts = [];
+  let t = 0, frame = 0;
+
+  function ecg(x) {
+    const phase = ((x * 1.8) % (Math.PI * 2));
+    const p = phase / (Math.PI * 2);
+    if(p < .08) return 0;
+    if(p < .12) return p < .10 ? (p-.08)*(-5) : (p-.10)*5;
+    if(p < .18) return 0;
+    if(p < .22) return (p-.18) * 25;
+    if(p < .26) return 1 - (p-.22) * 37.5;
+    if(p < .32) return -.5 + (p-.26) * 8.3;
+    if(p < .38) return 0;
+    if(p < .48) return Math.sin((p-.38)*Math.PI/.10) * .18;
+    return 0;
+  }
+
+  function draw(){
+    t += .07;
+    pts.push(H/2 - ecg(t) * (H/2 - 8));
+    if(pts.length > W) pts.shift();
+    ctx.clearRect(0,0,W,H);
+    ctx.beginPath();
+    ctx.strokeStyle = '#b06060';
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = '#c07060';
+    ctx.shadowBlur = 8;
+    pts.forEach((y,x) => x === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y));
+    ctx.stroke();
+    if(pts.length > 0){
+      ctx.beginPath();
+      ctx.arc(pts.length-1, pts[pts.length-1], 3, 0, Math.PI*2);
+      ctx.fillStyle = '#e08070';
+      ctx.shadowBlur = 14;
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+    frame++;
+  }
+
+  const ecgTimer = setInterval(draw, 16);
+
+  // progress bar
+  const fill = document.getElementById('prog-fill');
+  let prog = 0;
+  const progTimer = setInterval(() => {
+    prog += 1.4;
+    fill.style.width = Math.min(prog, 100) + '%';
+    if(prog >= 100) clearInterval(progTimer);
+  }, 30);
+
+  // hide loader at ~3.6s
+  setTimeout(() => {
+    clearInterval(ecgTimer);
+    document.getElementById('loader').classList.add('out');
+    setTimeout(heroReveal, 700);
+  }, 3600);
+})();
+
+/* ═══ HERO REVEAL ═══ */
+function heroReveal(){
+  setTimeout(() => document.getElementById('hp').classList.add('on'), 0);
+  setTimeout(() => document.getElementById('hn').classList.add('on'), 200);
+  setTimeout(() => document.getElementById('hd').classList.add('on'), 500);
+  setTimeout(() => document.getElementById('hs').classList.add('on'), 800);
+}
+
+/* ═══ HEARTS CANVAS ═══ */
+(function(){
+  const c = document.getElementById('hearts-canvas');
+  const ctx = c.getContext('2d');
+  const hearts = [];
+
+  function resize(){ c.width = window.innerWidth; c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function spawn(x, y, big){
+    hearts.push({
+      x: x ?? Math.random() * c.width,
+      y: y ?? -20,
+      s: big ? 18 + Math.random()*28 : 5 + Math.random()*13,
+      vy: big ? 1.2 + Math.random()*2 : .35 + Math.random()*.9,
+      sway: (Math.random()-.5)*.9,
+      swayT: Math.random()*Math.PI*2,
+      a: big ? .4 + Math.random()*.45 : .07 + Math.random()*.22,
+      col: `hsl(${340+Math.random()*22}, ${45+Math.random()*35}%, ${44+Math.random()*26}%)`
+    });
+  }
+
+  window._heartBurst = function(){
+    for(let i=0;i<70;i++) setTimeout(() => spawn(
+      c.width/2 + (Math.random()-.5)*c.width*.85,
+      c.height/2 + (Math.random()-.5)*c.height*.5,
+      true
+    ), i*35);
+  };
+
+  function drawH(x,y,s,a,col){
+    ctx.save(); ctx.globalAlpha=a; ctx.fillStyle=col;
+    ctx.beginPath();
+    ctx.moveTo(x, y+s*.35);
+    ctx.bezierCurveTo(x,y, x-s*.55,y, x-s*.55,y+s*.35);
+    ctx.bezierCurveTo(x-s*.55,y+s*.7, x,y+s*1.0, x,y+s*1.15);
+    ctx.bezierCurveTo(x,y+s*1.0, x+s*.55,y+s*.7, x+s*.55,y+s*.35);
+    ctx.bezierCurveTo(x+s*.55,y, x,y, x,y+s*.35);
+    ctx.fill(); ctx.restore();
+  }
+
+  let f = 0;
+  function loop(){
+    ctx.clearRect(0,0,c.width,c.height);
+    if(f % 28 === 0) spawn();
+    for(let i=hearts.length-1;i>=0;i--){
+      const h=hearts[i];
+      h.swayT+=.018; h.x+=Math.sin(h.swayT)*h.sway; h.y+=h.vy;
+      drawH(h.x,h.y,h.s,h.a,h.col);
+      if(h.y > c.height+40) hearts.splice(i,1);
+    }
+    f++; requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ═══ INTERSECTION OBSERVER ═══ */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      e.target.classList.add('on');
+      // fire typewriter when tw-section enters
+      if(e.target.id === 'tw-section') startTypewriter();
+    }
+  });
+}, { threshold: .18 });
+
+document.querySelectorAll('.rf, .rl, .promise-line, .sec-label, #tw-section').forEach(el => io.observe(el));
+
+/* ═══ TYPEWRITER ═══ */
+let twStarted = false;
+function startTypewriter(){
+  if(twStarted) return; twStarted = true;
+  document.getElementById('tw-label').classList.add('on');
+
+  const lines = [
+    "I know I fight with you",
+    "over the silliest, most pointless things.",
+    " ",
+    "A tone of voice. A two-word reply.",
+    "Something so small it's embarrassing.",
+    " ",
+    "And every single time —",
+    "the moment it's over,",
+    "all I feel is ashamed.",
+    " ",
+    "Because you didn't deserve any of it.",
+    "You never do."
+  ];
+
+  const el = document.getElementById('tw-output');
+  let li = 0, ci = 0, html = '';
+
+  function type(){
+    if(li >= lines.length){ el.innerHTML = html; return; }
+    const line = lines[li];
+    if(line === ' '){
+      html += '<br/>'; li++; ci = 0;
+      setTimeout(type, 300); return;
+    }
+    if(ci < line.length){
+      if(ci === 0 && li > 0) html += '<br/>';
+      html += line[ci]; ci++;
+      el.innerHTML = html + '<span class="cursor"></span>';
+      setTimeout(type, 50 + Math.random()*35);
+    } else {
+      li++; ci = 0;
+      setTimeout(type, 480);
+    }
+  }
+  setTimeout(type, 500);
+}
+
+/* ═══ FORGIVE BUTTON ═══ */
+document.getElementById('forgive-btn').addEventListener('click', function(){
+  this.style.display = 'none';
+  document.getElementById('forgiven-wrap').classList.add('show');
+  window._heartBurst && window._heartBurst();
+});
+</script>
+</body>
+</html>
